@@ -14,7 +14,7 @@ export const register = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { success, error } = AuthRegisterSchema.safeParse(req.body)
+    const { success, error, data } = AuthRegisterSchema.safeParse(req.body)
 
     if (!success) {
       return res
@@ -22,12 +22,12 @@ export const register = async (
         .json({ success: false, message: error.issues[0].message })
     }
 
-    const { name, email, password } = req.body
+    const { name, email, password } = data
     const userExists = await Auth.findOne({ email }).exec()
 
     if (userExists !== null) {
       return res
-        .status(409)
+        .status(401)
         .json({ success: false, message: 'User already exists.' })
     }
 
@@ -72,7 +72,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     const userExists = await AuthModel.getByEmail(email)
     if (userExists === null) {
       return res
-        .status(409)
+        .status(401)
         .json({ success: false, message: 'Invalid credentials.' })
     }
 

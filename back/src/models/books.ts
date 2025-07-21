@@ -6,22 +6,27 @@ export const BooksModel = {
     return await Books.find()
   },
 
+  async getMyBooks (userId: string): Promise<IBooksDocument[]> {
+    return await Books.find({ user_id: userId })
+  },
+
   async getById (_id: string): Promise<IBooksDocument | null> {
     return await Books.findById({ _id })
   },
 
-  async create (params: IBooksPayload): Promise<IBooks> {
+  async create (params: IBooksPayload): Promise<IBooksDocument> {
     const newBook = new Books(params)
-    const savedBook = await newBook.save()
+    return await newBook.save()
+  },
 
-    const { __v: valu, _id, ...rest } = savedBook.toObject()
+  async update (params: IBooks): Promise<IBooksDocument | null> {
+    const { id, created_at: createdAt, ...restBook } = params
+    return await Books.findByIdAndUpdate(id, restBook, { new: true })
+  },
 
-    const result: IBooks = {
-      ...rest,
-      id: savedBook._id.toString()
-    }
-
-    return result
+  async delete (_id: string): Promise<boolean> {
+    const result = await Books.deleteOne({ _id })
+    return result.deletedCount === 1
   }
 
 }

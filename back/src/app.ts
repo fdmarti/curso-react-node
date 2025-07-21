@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 
 import BookRouter from './routes/books'
 import UserRouter from './routes/auth'
+import LibraryRoutes from './routes/library'
 
 import { connect } from './config/mongoConect'
 
@@ -19,6 +20,7 @@ app.get('/', (_, res) => {
 
 app.use('/api/auth', UserRouter)
 app.use('/api/books', BookRouter)
+app.use('/api/library', LibraryRoutes)
 
 app.listen(PORT, () => {
   console.log('Server running in port ', PORT)
